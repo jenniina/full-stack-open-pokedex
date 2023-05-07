@@ -46,16 +46,16 @@ jobs:
           serviceId: ${{ secrets.RENDER_POKEDEX_ID }}
           apiKey: ${{ secrets.RENDER_API_KEY }}
           deployHookURL: ${{ secrets.RENDER_POKEDEX_DEPLOY_HOOK_URL }}
-      - name: Test Success
-        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
       - name: Test Failure
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if:  (${{ success() }} || ${{ failure() }}) && (${{ steps.eslint.outcome }} == 'failure' || ${{ steps.build.outcome }} == 'failure' || ${{ steps.test.outcome }} == 'failure' || ${{ steps.e2e.outcome }} == 'failure' || ${{ steps.deploy.outcome }} == 'failure')
+        if: (${{ success() }} || ${{ failure() }}) && (${{ steps.eslint.outcome }} == 'failure' || ${{ steps.build.outcome }} == 'failure' || ${{ steps.test.outcome }} == 'failure' || ${{ steps.e2e.outcome }} == 'failure' || ${{ steps.deploy.outcome }} == 'failure')
         with:
           severity: error
           details: Deployment Failed!
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-      if: success()
+      - name: Test Success
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        if: success()
         with:
           severity: info
           details: Deployment Succeeded!
