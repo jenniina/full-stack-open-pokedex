@@ -46,45 +46,6 @@ jobs:
           serviceId: ${{ secrets.RENDER_POKEDEX_ID }}
           apiKey: ${{ secrets.RENDER_API_KEY }}
           deployHookURL: ${{ secrets.RENDER_POKEDEX_DEPLOY_HOOK_URL }}
-      - name: Test Eslint Failure
-        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: (${{ success() }} || ${{ failure() }}) && ${{ steps.eslint.outcome }} == 'failure'
-        with:
-          severity: error
-          details: Eslint failed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
-      - name: Test Build Failure
-        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: (${{ success() }} || ${{ failure() }}) && ${{ steps.build.outcome }} == 'failure'
-        with:
-          severity: error
-          details: npm run build failed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
-      - name: Test Tests Failure
-        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: (${{ success() }} || ${{ failure() }}) && ${{ steps.test.outcome }} == 'failure'
-        with:
-          severity: error
-          details: Tests failed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
-      - name: Test E2E Tests Failure
-        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: (${{ success() }} || ${{ failure() }}) && ${{ steps.e2e.outcome }} == 'failure'
-        with:
-          severity: error
-          details: E2E-tests failed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
-      - name: Test Deployment Failure
-        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: (${{ success() }} || ${{ failure() }}) && ${{ steps.deploy.outcome }} == 'failure'
-        with:
-          severity: error
-          details: Render deployment failed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
       - name: Test Success
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
@@ -93,6 +54,47 @@ jobs:
           severity: info
           details: Deployment Succeeded!
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Test Eslint Failure
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        if: github.event_name == 'push' && ${{ steps.eslint.outcome }} == 'failure'
+        with:
+          severity: error
+          details: Eslint failed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Test Build Failure
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        if: github.event_name == 'push' && ${{ steps.build.outcome }} == 'failure'
+        with:
+          severity: error
+          details: npm run build failed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Test Tests Failure
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        if: github.event_name == 'push' && ${{ steps.test.outcome }} == 'failure'
+        with:
+          severity: error
+          details: Tests failed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Test E2E Tests Failure
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        if: github.event_name == 'push' && ${{ steps.e2e.outcome }} == 'failure'
+        with:
+          severity: error
+          details: E2E-tests failed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Test Deployment Failure
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        if: github.event_name == 'push' && ${{ steps.deploy.outcome }} == 'failure'
+        with:
+          severity: error
+          details: Render deployment failed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-20.04
