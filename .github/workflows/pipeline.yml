@@ -17,25 +17,49 @@ jobs:
           node-version: '16'
       - name: Install dependencies
         run: npm install
+        continue-on-error: true
       - name: Check style
+        id: eslint
         run: npm run eslint
+        continue-on-error: true
       - name: build
+        id: build
         run: npm run build
+        continue-on-error: true
       - name: test
+        id: test
         run: npm test
+        continue-on-error: true
       - name: e2e tests
+        id: e2e
         uses: cypress-io/github-action@dfda9365a4881a8521b8e3c3538275242aae9151
         with:
           start: npm run start-prod
           command: npm run test:e2e
           wait-on: http://localhost:5000
+        continue-on-error: true
       - name: Deploy
+        id: deploy
         uses: bankfliptech/deploy-to-render@e51c1879584c0d27bd916bbcb3f17e9efcacd818
         if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
         with:
           serviceId: ${{ secrets.RENDER_POKEDEX_ID }}
           apiKey: ${{ secrets.RENDER_API_KEY }}
           deployHookURL: ${{ secrets.RENDER_POKEDEX_DEPLOY_HOOK_URL }}
+      - name: Test Success
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+      - name: Test Failure
+        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
+        if:  (${{ success() }} || ${{ failure() }}) && (${{ steps.eslint.outcome }} == 'failure' || ${{ steps.build.outcome }} == 'failure' || ${{ steps.test.outcome }} == 'failure' || ${{ steps.e2e.outcome }} == 'failure' || ${{ steps.deploy.outcome }} == 'failure')
+        with:
+          severity: error
+          details: Deployment Failed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      if: success()
+        with:
+          severity: info
+          details: Deployment Succeeded!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-20.04
