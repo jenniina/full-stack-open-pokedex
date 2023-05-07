@@ -49,7 +49,7 @@ jobs:
 
       - name: Test Success
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: ${{ success() }}
+        if: success()
         with:
           severity: info
           details: Deployment Succeeded!
@@ -57,42 +57,10 @@ jobs:
 
       - name: Test Eslint Failure
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: github.event_name == 'push' && ${{ steps.eslint.outcome }} == 'failure'
+        if: failure()
         with:
           severity: error
-          details: Eslint failed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
-      - name: Test Build Failure
-        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: github.event_name == 'push' && ${{ steps.build.outcome }} == 'failure'
-        with:
-          severity: error
-          details: npm run build failed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
-      - name: Test Tests Failure
-        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: github.event_name == 'push' && ${{ steps.test.outcome }} == 'failure'
-        with:
-          severity: error
-          details: Tests failed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
-      - name: Test E2E Tests Failure
-        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: github.event_name == 'push' && ${{ steps.e2e.outcome }} == 'failure'
-        with:
-          severity: error
-          details: E2E-tests failed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
-      - name: Test Deployment Failure
-        uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: github.event_name == 'push' && ${{ steps.deploy.outcome }} == 'failure'
-        with:
-          severity: error
-          details: Render deployment failed!
+          details: Deployment failed! The commit ${{ github.event.commits[0].url }} by ${{ github.event.commits[0].committer.username }} broke something
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   tag_release:
