@@ -57,7 +57,7 @@ jobs:
 
       - name: Test Eslint Failure
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: ${{ steps.eslint.outcome }} == 'failure'
+        if: github.event_name == 'push' && ${{ steps.eslint.outcome }} == 'failure'
         with:
           severity: error
           details: Eslint failed!
@@ -65,7 +65,7 @@ jobs:
 
       - name: Test Build Failure
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: ${{ steps.build.outcome }} == 'failure'
+        if: github.event_name == 'push' && ${{ steps.build.outcome }} == 'failure'
         with:
           severity: error
           details: npm run build failed!
@@ -73,7 +73,7 @@ jobs:
 
       - name: Test Tests Failure
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: ${{ steps.test.outcome }} == 'failure'
+        if: github.event_name == 'push' && ${{ steps.test.outcome }} == 'failure'
         with:
           severity: error
           details: Tests failed!
@@ -81,7 +81,7 @@ jobs:
 
       - name: Test E2E Tests Failure
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: ${{ steps.e2e.outcome }} == 'failure'
+        if: github.event_name == 'push' && ${{ steps.e2e.outcome }} == 'failure'
         with:
           severity: error
           details: E2E-tests failed!
@@ -89,7 +89,7 @@ jobs:
 
       - name: Test Deployment Failure
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: ${{ steps.deploy.outcome }} == 'failure'
+        if: github.event_name == 'push' && ${{ steps.deploy.outcome }} == 'failure'
         with:
           severity: error
           details: Render deployment failed!
