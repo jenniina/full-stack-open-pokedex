@@ -49,7 +49,7 @@ jobs:
 
       - name: Test Success
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: success()
+        if: success() && ${{ github.event_name == 'push' }}
         with:
           severity: info
           details: New commit ${{ github.event.commits[0].url }} by ${{ github.event.commits[0].committer.username }}
