@@ -17,19 +17,15 @@ jobs:
           node-version: '16'
       - name: Install dependencies
         run: npm install
-        continue-on-error: true
       - name: Check style
-        id: eslint
+        id: lint1
         run: npm run eslint
-        continue-on-error: true
       - name: build
         id: build
         run: npm run build
-        continue-on-error: true
       - name: test
         id: test
         run: npm test
-        continue-on-error: true
       - name: e2e tests
         id: e2e
         uses: cypress-io/github-action@dfda9365a4881a8521b8e3c3538275242aae9151
@@ -49,7 +45,7 @@ jobs:
 
       - name: Test Success
         uses: rjstone/discord-webhook-notify@89b0bf43c2c8514f70d0dcba4a706b904e8a3112
-        if: success() && ${{ github.event_name == 'push' }}
+        if: success()
         with:
           severity: info
           details: New commit ${{ github.event.commits[0].url }} by ${{ github.event.commits[0].committer.username }}
@@ -71,6 +67,11 @@ jobs:
         with:
           ref: ${{ github.sha }}
           fetch-depth: '0'
+      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+        with:
+          node-version: '16'
+      - name: Install dependencies
+        run: npm install
       - name: Bump version and push tag
         if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
         uses: anothrNick/github-tag-action@8c8163ef62cf9c4677c8e800f36270af27930f42
